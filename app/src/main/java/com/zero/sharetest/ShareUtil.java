@@ -7,11 +7,14 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
+import com.tencent.connect.share.QQShare;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
@@ -20,6 +23,9 @@ import com.tencent.mm.opensdk.modelmsg.WXTextObject;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+import com.tencent.tauth.IUiListener;
+import com.tencent.tauth.Tencent;
+import com.tencent.tauth.UiError;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -31,7 +37,7 @@ import java.util.ArrayList;
  */
 
 public class ShareUtil {
-    private static String QQ_APP_ID="101355302";
+    private static String QQ_APP_ID="1105632898";
     private static String WEIXIN_APP_ID ="wx8954b928da52c490";
     private static String SINA_APP_ID ="141246853";
 
@@ -130,32 +136,101 @@ public class ShareUtil {
      * 分享图片到qq，需导入qq SDK，并配置好
      * @param activity
      */
-//    public static void shareToQQ(Activity activity,String imagePath){
-//        Bundle params = new Bundle();
-//        Tencent mTencent = Tencent.createInstance(QQ_APP_ID,activity);
-//        params.putString(QQShare.SHARE_TO_QQ_IMAGE_LOCAL_URL,imagePath);
-//        params.putString(QQShare.SHARE_TO_QQ_APP_NAME,activity.getString(R.string.app_name));
-////        params.putString(QQShare.SHARE_TO_QQ_TITLE,"1");
-//        params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_IMAGE);
-////                params.putInt(QQShare.SHARE_TO_QQ_EXT_INT, QQShare.SHARE_TO_QQ_FLAG_QZONE_AUTO_OPEN);//取消注释则默认分享到qq空间
-//        mTencent.shareToQQ(activity, params, new IUiListener() {
-//            @Override
-//            public void onComplete(Object o) {
-//
-//            }
-//
-//            @Override
-//            public void onError(UiError uiError) {
-//
-//            }
-//
-//            @Override
-//            public void onCancel() {
-//
-//            }
-//        });
-//    }
-//
+    public static void shareToQQ_image(final Activity activity, String imagePath){
+        Bundle params = new Bundle();
+        Tencent mTencent = Tencent.createInstance(QQ_APP_ID,activity);
+        params.putString(QQShare.SHARE_TO_QQ_IMAGE_LOCAL_URL,imagePath);
+        params.putString(QQShare.SHARE_TO_QQ_APP_NAME,activity.getString(R.string.app_name));
+        params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_IMAGE);
+//                params.putInt(QQShare.SHARE_TO_QQ_EXT_INT, QQShare.SHARE_TO_QQ_FLAG_QZONE_AUTO_OPEN);//取消注释则默认分享到qq空间
+        mTencent.shareToQQ(activity, params, new IUiListener() {
+            @Override
+            public void onComplete(Object o) {
+               Toast.makeText(activity,"分享成功",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(UiError uiError) {
+                Toast.makeText(activity,"分享失败",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancel() {
+                Toast.makeText(activity,"取消分享",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * 分享音乐到qq，需导入qq SDK，并配置好
+     * @param activity
+     */
+    public static void shareToQQ_music(final Activity activity, String imagePath, String url_music, String url_web){
+        Bundle params = new Bundle();
+        Tencent mTencent = Tencent.createInstance(QQ_APP_ID,activity);
+        //缩略图
+        params.putString(QQShare.SHARE_TO_QQ_IMAGE_LOCAL_URL,imagePath);
+        params.putString(QQShare.SHARE_TO_QQ_APP_NAME,activity.getString(R.string.app_name));
+        params.putString(QQShare.SHARE_TO_QQ_TITLE,"标题");
+        params.putString(QQShare.SHARE_TO_QQ_SUMMARY,"摘要");
+        //点击打开的网页地址
+        params.putString(QQShare.SHARE_TO_QQ_TARGET_URL,  url_web);
+        //音乐地址
+        params.putString(QQShare.SHARE_TO_QQ_AUDIO_URL, url_music);
+        params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_AUDIO);
+//                params.putInt(QQShare.SHARE_TO_QQ_EXT_INT, QQShare.SHARE_TO_QQ_FLAG_QZONE_AUTO_OPEN);//取消注释则默认分享到qq空间
+        mTencent.shareToQQ(activity, params, new IUiListener() {
+            @Override
+            public void onComplete(Object o) {
+                Toast.makeText(activity,"分享成功",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(UiError uiError) {
+                Toast.makeText(activity,"分享失败",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancel() {
+                Toast.makeText(activity,"取消分享",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * 分享音乐到qq，需导入qq SDK，并配置好
+     * @param activity
+     */
+    public static void shareToQQ_web(final Activity activity, String imagePath, String url_web){
+        Bundle params = new Bundle();
+        Tencent mTencent = Tencent.createInstance(QQ_APP_ID,activity);
+        //缩略图
+        params.putString(QQShare.SHARE_TO_QQ_IMAGE_LOCAL_URL,imagePath);
+        params.putString(QQShare.SHARE_TO_QQ_APP_NAME,activity.getString(R.string.app_name));
+        params.putString(QQShare.SHARE_TO_QQ_TITLE,"标题");
+        params.putString(QQShare.SHARE_TO_QQ_SUMMARY,"摘要");
+        //点击打开的网页地址
+        params.putString(QQShare.SHARE_TO_QQ_TARGET_URL,  url_web);
+        params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_DEFAULT);
+//                params.putInt(QQShare.SHARE_TO_QQ_EXT_INT, QQShare.SHARE_TO_QQ_FLAG_QZONE_AUTO_OPEN);//取消注释则默认分享到qq空间
+        mTencent.shareToQQ(activity, params, new IUiListener() {
+            @Override
+            public void onComplete(Object o) {
+                Toast.makeText(activity,"分享成功",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(UiError uiError) {
+                Toast.makeText(activity,"分享失败",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancel() {
+                Toast.makeText(activity,"取消分享",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 //    /**
 //     * 分享图片到微博 需导入微博 SDK，并配置好
 //     * 仅当安装了微博客户端有效

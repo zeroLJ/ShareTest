@@ -1,5 +1,6 @@
 package com.zero.sharetest;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -40,6 +41,24 @@ public class MainActivity extends AppCompatActivity {
             case R.id.shareToTimeline_music:
                 ShareUtil.shareToTimeline_music(this,"www.baidu.com");
                 break;
+            case R.id.shareToQQqq_image:
+                ShareUtil.saveCurrentImage(this);
+                ShareUtil.shareToQQ_image(this,ShareUtil.getImagePath(this));
+                break;
+            case R.id.shareToQQqq_music:
+                ShareUtil.saveCurrentImage(this);
+                ShareUtil.shareToQQ_music(this,ShareUtil.getImagePath(this),
+                        "http://www.kugou.com/song/#hash=99632FF0CF903BA89A8E03234F6B9530&album_id=2783406", "http://www.baidu.com");
+                break;
+            case R.id.shareToQQqq_web:
+                ShareUtil.saveCurrentImage(this);
+                ShareUtil.shareToQQ_web(this,ShareUtil.getImagePath(this), "http://www.baidu.com");
+                break;
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        mTencent.onActivityResult(requestCode, resultCode, data);
     }
 }
