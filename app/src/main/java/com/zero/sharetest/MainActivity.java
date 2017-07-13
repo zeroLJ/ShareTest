@@ -4,9 +4,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+import com.sina.weibo.sdk.auth.sso.SsoHandler;
+import com.sina.weibo.sdk.share.WbShareCallback;
+import com.sina.weibo.sdk.share.WbShareHandler;
 
+public class MainActivity extends AppCompatActivity  implements WbShareCallback{
+    //新浪分享接口实例，用于接收返回数据
+    WbShareHandler shareHandler;
+    //新浪授权接口实例，用于接收返回数据
+    SsoHandler mSsoHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,11 +62,43 @@ public class MainActivity extends AppCompatActivity {
                 ShareUtil.saveCurrentImage(this);
                 ShareUtil.shareToQQ_web(this,ShareUtil.getImagePath(this), "http://www.baidu.com");
                 break;
+            case R.id.shareToSINA:
+                ShareUtil.saveCurrentImage(this);
+                shareHandler = ShareUtil.shareToSINA(this,ShareUtil.getImagePath(this));
+                break;
+            case R.id.loginSINA:
+                mSsoHandler = LoginUtil.LoginSina(this);
+                break;
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        mTencent.onActivityResult(requestCode, resultCode, data);
+        if (mSsoHandler != null) {
+          mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
+        }
+    }
+
+
+
+    @Override
+    public void onWbShareSuccess() {
+        Toast.makeText(this,"分享成功",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onWbShareCancel() {
+        Toast.makeText(this,"取消分享",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onWbShareFail() {
+        Toast.makeText(this,"分享失败",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        shareHandler.doResultIntent(intent,this);
     }
 }

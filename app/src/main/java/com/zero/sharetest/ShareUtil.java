@@ -14,6 +14,12 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.sina.weibo.sdk.WbSdk;
+import com.sina.weibo.sdk.api.ImageObject;
+import com.sina.weibo.sdk.api.TextObject;
+import com.sina.weibo.sdk.api.WeiboMultiMessage;
+import com.sina.weibo.sdk.auth.AuthInfo;
+import com.sina.weibo.sdk.share.WbShareHandler;
 import com.tencent.connect.share.QQShare;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
@@ -33,13 +39,16 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 /**
- * Created by WatchVoice04 on 2017/6/14.
+ * Created by zero on 2017/6/14.
+ *
+ * 使用微信分享时需先在application（本项目是app.java文件）注册或在代码中添加
+ *
  */
 
 public class ShareUtil {
     private static String QQ_APP_ID="1105632898";
     private static String WEIXIN_APP_ID ="wx8954b928da52c490";
-    private static String SINA_APP_ID ="141246853";
+    private static String SINA_APP_ID ="1042075203";
 
     /**
      * 分享图片给微信好友,不需导入微信SDK
@@ -198,7 +207,7 @@ public class ShareUtil {
     }
 
     /**
-     * 分享音乐到qq，需导入qq SDK，并配置好
+     * 分享网页到qq，需导入qq SDK，并配置好
      * @param activity
      */
     public static void shareToQQ_web(final Activity activity, String imagePath, String url_web){
@@ -231,11 +240,11 @@ public class ShareUtil {
         });
     }
 
-//    /**
-//     * 分享图片到微博 需导入微博 SDK，并配置好
-//     * 仅当安装了微博客户端有效
-//     * @param activity
-//     */
+    /**
+     * 分享图片到微博 需导入微博 旧版SDK，并配置好
+     * 仅当安装了微博客户端有效
+     * @param activity
+     */
 //    public static void shareToSINA(final Activity activity, String imagePath){
 //        IWeiboShareAPI iWeiboShareAPI = WeiboShareSDK.createWeiboAPI(activity, SINA_APP_ID);
 //        iWeiboShareAPI.registerApp();//将应用注册到微博客户端
@@ -255,6 +264,31 @@ public class ShareUtil {
 //        request.multiMessage = weiboMessage;
 //        iWeiboShareAPI.sendRequest(activity, request);//发送请求消息到微博，唤起微博分享界面
 //    }
+
+    /**
+     * 分享图片到微博 需导入微博 新版SDK，并配置好
+     * 仅当安装了微博客户端有效
+     * @param activity
+     */
+    public static WbShareHandler shareToSINA(final Activity activity, String imagePath){
+        WbSdk.install(activity,new AuthInfo(activity,SINA_APP_ID,"https://api.weibo.com/oauth2/default.html",null));
+        WbShareHandler shareHandler = new WbShareHandler(activity);
+        shareHandler.registerApp();
+        WeiboMultiMessage weiboMultiMessage = new WeiboMultiMessage();
+        //设置描述
+        TextObject textObject = new TextObject();
+        textObject.text =  "描述";
+        weiboMultiMessage.textObject = textObject;
+
+        //设置图片
+        ImageObject imageObject = new ImageObject();
+        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+        imageObject.setImageObject(bitmap);
+        weiboMultiMessage.mediaObject = imageObject;
+
+        shareHandler.shareMessage(weiboMultiMessage,false);
+        return shareHandler;
+    }
 
     /**
      * 分享图片给微信朋友，需导入微信sdk

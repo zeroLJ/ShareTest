@@ -14,6 +14,7 @@ public class app extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        //向微信注册app
         api = WXAPIFactory.createWXAPI(this, APP_ID, true);
         api.registerApp(APP_ID);
     }
