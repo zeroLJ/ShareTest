@@ -9,16 +9,22 @@ import android.widget.Toast;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.share.WbShareCallback;
 import com.sina.weibo.sdk.share.WbShareHandler;
+import com.tencent.tauth.IUiListener;
+import com.tencent.tauth.Tencent;
 
 public class MainActivity extends AppCompatActivity  implements WbShareCallback{
     //新浪分享接口实例，用于接收返回数据
     WbShareHandler shareHandler;
     //新浪授权接口实例，用于接收返回数据
     SsoHandler mSsoHandler;
+    //接收QQ授权结果
+    IUiListener iUiListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
     }
 
     public void onClick(View view) {
@@ -49,18 +55,18 @@ public class MainActivity extends AppCompatActivity  implements WbShareCallback{
             case R.id.shareToTimeline_music:
                 ShareUtil.shareToTimeline_music(this,"www.baidu.com");
                 break;
-            case R.id.shareToQQqq_image:
+            case R.id.shareToQQ_image:
                 ShareUtil.saveCurrentImage(this);
-                ShareUtil.shareToQQ_image(this,ShareUtil.getImagePath(this));
+                iUiListener = ShareUtil.shareToQQ_image(this,ShareUtil.getImagePath(this));
                 break;
-            case R.id.shareToQQqq_music:
+            case R.id.shareToQQ_music:
                 ShareUtil.saveCurrentImage(this);
-                ShareUtil.shareToQQ_music(this,ShareUtil.getImagePath(this),
+                iUiListener = ShareUtil.shareToQQ_music(this,ShareUtil.getImagePath(this),
                         "http://www.kugou.com/song/#hash=99632FF0CF903BA89A8E03234F6B9530&album_id=2783406", "http://www.baidu.com");
                 break;
-            case R.id.shareToQQqq_web:
+            case R.id.shareToQQ_web:
                 ShareUtil.saveCurrentImage(this);
-                ShareUtil.shareToQQ_web(this,ShareUtil.getImagePath(this), "http://www.baidu.com");
+                iUiListener = ShareUtil.shareToQQ_web(this,ShareUtil.getImagePath(this), "http://www.baidu.com");
                 break;
             case R.id.shareToSINA:
                 ShareUtil.saveCurrentImage(this);
@@ -69,18 +75,29 @@ public class MainActivity extends AppCompatActivity  implements WbShareCallback{
             case R.id.loginSINA:
                 mSsoHandler = LoginUtil.LoginSina(this);
                 break;
+            case R.id.loginQQ:
+                iUiListener = LoginUtil.LoginQQ(this);
+                break;
+            case R.id.getQQInfo:
+                LoginUtil.getQQInfo(this);
+                break;
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (mSsoHandler != null) {
-          mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
+            mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
+            mSsoHandler = null;
+        }
+        if (iUiListener!= null){
+            //此句很关键，不写此句则无法获取QQ授权后返回的信息
+            Tencent.onActivityResultData(requestCode,resultCode,data,iUiListener);
+            iUiListener = null;
         }
     }
 
-
-
+    //以下方法都是新浪微博分享相关
     @Override
     public void onWbShareSuccess() {
         Toast.makeText(this,"分享成功",Toast.LENGTH_SHORT).show();

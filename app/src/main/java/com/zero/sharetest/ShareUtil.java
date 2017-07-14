@@ -145,17 +145,17 @@ public class ShareUtil {
      * 分享图片到qq，需导入qq SDK，并配置好
      * @param activity
      */
-    public static void shareToQQ_image(final Activity activity, String imagePath){
+    public static IUiListener shareToQQ_image(final Activity activity, String imagePath){
         Bundle params = new Bundle();
         Tencent mTencent = Tencent.createInstance(QQ_APP_ID,activity);
         params.putString(QQShare.SHARE_TO_QQ_IMAGE_LOCAL_URL,imagePath);
         params.putString(QQShare.SHARE_TO_QQ_APP_NAME,activity.getString(R.string.app_name));
         params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_IMAGE);
 //                params.putInt(QQShare.SHARE_TO_QQ_EXT_INT, QQShare.SHARE_TO_QQ_FLAG_QZONE_AUTO_OPEN);//取消注释则默认分享到qq空间
-        mTencent.shareToQQ(activity, params, new IUiListener() {
+        IUiListener iUiListener = new IUiListener() {
             @Override
             public void onComplete(Object o) {
-               Toast.makeText(activity,"分享成功",Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity,"分享成功",Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -167,14 +167,16 @@ public class ShareUtil {
             public void onCancel() {
                 Toast.makeText(activity,"取消分享",Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+        mTencent.shareToQQ(activity, params, iUiListener);
+        return iUiListener;
     }
 
     /**
      * 分享音乐到qq，需导入qq SDK，并配置好
      * @param activity
      */
-    public static void shareToQQ_music(final Activity activity, String imagePath, String url_music, String url_web){
+    public static IUiListener shareToQQ_music(final Activity activity, String imagePath, String url_music, String url_web){
         Bundle params = new Bundle();
         Tencent mTencent = Tencent.createInstance(QQ_APP_ID,activity);
         //缩略图
@@ -188,7 +190,7 @@ public class ShareUtil {
         params.putString(QQShare.SHARE_TO_QQ_AUDIO_URL, url_music);
         params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_AUDIO);
 //                params.putInt(QQShare.SHARE_TO_QQ_EXT_INT, QQShare.SHARE_TO_QQ_FLAG_QZONE_AUTO_OPEN);//取消注释则默认分享到qq空间
-        mTencent.shareToQQ(activity, params, new IUiListener() {
+        IUiListener iUiListener = new IUiListener() {
             @Override
             public void onComplete(Object o) {
                 Toast.makeText(activity,"分享成功",Toast.LENGTH_SHORT).show();
@@ -203,14 +205,16 @@ public class ShareUtil {
             public void onCancel() {
                 Toast.makeText(activity,"取消分享",Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+        mTencent.shareToQQ(activity, params, iUiListener);
+        return iUiListener;
     }
 
     /**
      * 分享网页到qq，需导入qq SDK，并配置好
      * @param activity
      */
-    public static void shareToQQ_web(final Activity activity, String imagePath, String url_web){
+    public static IUiListener shareToQQ_web(final Activity activity, String imagePath, String url_web){
         Bundle params = new Bundle();
         Tencent mTencent = Tencent.createInstance(QQ_APP_ID,activity);
         //缩略图
@@ -222,7 +226,7 @@ public class ShareUtil {
         params.putString(QQShare.SHARE_TO_QQ_TARGET_URL,  url_web);
         params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_DEFAULT);
 //                params.putInt(QQShare.SHARE_TO_QQ_EXT_INT, QQShare.SHARE_TO_QQ_FLAG_QZONE_AUTO_OPEN);//取消注释则默认分享到qq空间
-        mTencent.shareToQQ(activity, params, new IUiListener() {
+        IUiListener iUiListener = new IUiListener() {
             @Override
             public void onComplete(Object o) {
                 Toast.makeText(activity,"分享成功",Toast.LENGTH_SHORT).show();
@@ -237,8 +241,11 @@ public class ShareUtil {
             public void onCancel() {
                 Toast.makeText(activity,"取消分享",Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+        mTencent.shareToQQ(activity, params, iUiListener);
+        return iUiListener;
     }
+
 
     /**
      * 分享图片到微博 需导入微博 旧版SDK，并配置好

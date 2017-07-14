@@ -38,6 +38,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:configChanges="orientation|keyboardHidden">
         </activity>
+        <meta-data android:name="TA_APPKEY" android:value=""/>
     </application>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
