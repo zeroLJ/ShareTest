@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.sina.weibo.sdk.WbSdk;
 import com.sina.weibo.sdk.api.ImageObject;
 import com.sina.weibo.sdk.api.TextObject;
+import com.sina.weibo.sdk.api.WebpageObject;
 import com.sina.weibo.sdk.api.WeiboMultiMessage;
 import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.share.WbShareHandler;
@@ -35,7 +36,9 @@ import com.tencent.tauth.UiError;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -298,6 +301,32 @@ public class ShareUtil {
     }
 
     /**
+     * 分享网址到微博 需导入微博 新版SDK，并配置好
+     * 仅当安装了微博客户端有效
+     * @param activity
+     */
+    public static WbShareHandler shareToSINA_web(final Activity activity, String url){
+        WbSdk.install(activity,new AuthInfo(activity,SINA_APP_ID,"https://api.weibo.com/oauth2/default.html",null));
+        WbShareHandler shareHandler = new WbShareHandler(activity);
+        shareHandler.registerApp();
+        WeiboMultiMessage weiboMultiMessage = new WeiboMultiMessage();
+        //设置描述
+        TextObject textObject = new TextObject();
+        textObject.text =  "给大家分享一款使用的云笔记app，下载地址：" + "" ;
+        weiboMultiMessage.textObject = textObject;
+
+        WebpageObject webpageObject = new WebpageObject();
+        webpageObject.actionUrl = url;
+        webpageObject.defaultText = "呵呵";
+        Bitmap bitmap = BitmapFactory.decodeResource(activity.getResources(), R.mipmap.ic_launcher);
+        webpageObject.setThumbImage(bitmap);
+        weiboMultiMessage.mediaObject = webpageObject;
+
+        shareHandler.shareMessage(weiboMultiMessage,false);
+        return shareHandler;
+    }
+
+    /**
      * 分享图片给微信朋友，需导入微信sdk
      * @param context
      * @param imagePath
@@ -514,5 +543,27 @@ public class ShareUtil {
     //使用微信sdk分享图片时会用到的方法
     private static String buildTransaction(String type) {
         return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
+    }
+
+    public static String getMipmapPath(Context context,int mipmapID) {
+        Log.e("保存成功", "===========");
+//        将bitemap按照给出的文件名进行保存
+        try {
+            File f = new File(context.getExternalFilesDir(null).getAbsolutePath() + "/image.jpg");
+            if (f.exists()) {
+                f.delete();
+            }
+            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), mipmapID);
+            FileOutputStream out = new FileOutputStream(f);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.flush();
+            out.close();
+            return f.getAbsolutePath();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

@@ -1,6 +1,7 @@
 package com.zero.sharetest;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
@@ -33,6 +34,16 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import static android.content.ContentValues.TAG;
 
@@ -80,10 +91,9 @@ public class LoginUtil {
                             Toast.makeText(activity,"登陆成功",Toast.LENGTH_SHORT).show();
 
                             //获取用户信息
-//                            //url后的键值对查看官网api接口按需要修改
 //                            OkHttpClient client = new OkHttpClient();
 //                            Request request = new Request.Builder()
-//                                    .url("https://api.weibo.com/2/eps/user/info.json"+"?access_token="+mAccessToken.getToken()+"&uid="+mAccessToken.getUid())
+//                                    .url("https://api.weibo.com/2/users/show.json"+"?access_token="+mAccessToken.getToken()+"&uid="+mAccessToken.getUid())
 //                                    .build();
 //                            Call call = client.newCall(request);
 //                            call.enqueue(new Callback() {
@@ -95,7 +105,24 @@ public class LoginUtil {
 //                                @Override
 //                                public void onResponse(Call call, Response response) throws IOException {
 //                                    ResponseBody body = response.body();
-//                                    Log.i("ssss",body.string());
+////                                    Log.i("ssss",body.string());
+//                                    try {
+//
+//                                        String bodyStr = body.string();
+//                                        JSONObject jsonObject = new JSONObject(bodyStr);
+//                                        final String nickname = jsonObject.getString("screen_name");
+//                                        Log.i("ssss","screen_name:"+ jsonObject.getString("screen_name"));
+//                                        if(jsonObject.has("avatar_hd")){
+//                                            Bitmap bitmap = null;
+//
+//                                            //获取头像
+//                                            bitmap = getbitmap(jsonObject.getString("avatar_hd"));
+//                                            saveBitmap(bitmap, getStorePath(activity));
+//
+//                                        }
+//                                    } catch (JSONException e) {
+//                                        e.printStackTrace();
+//                                    }
 //                                }
 //                            });
                         }
@@ -117,6 +144,9 @@ public class LoginUtil {
     }
 
     public static IUiListener LoginQQ(final Activity activity){
+        if (mTencent!=null){
+            mTencent.logout(activity);
+        }
         mTencent = Tencent.createInstance(QQ_APP_ID,activity);
         IUiListener iUiListener = new IUiListener() {
             @Override
